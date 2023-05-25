@@ -1,0 +1,35 @@
+name: ci dev pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t be-dothatlist-app -f Dockerfile.dev .
+      - name: Set Docker login credentials
+        run: |
+          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> $GITHUB_ENV
+          echo "DOCKER_PASSWORD=${{ secrets.DOCKER_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Docker login
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+      - name: Add tag to Docker image
+        run: docker tag be-dothatlist-app $DOCKER_USERNAME/be-dothatlist-app:latest
+
+      - name: Push Docker image to registry
+        run: docker push $DOCKER_USERNAME/be-dothatlist-app
