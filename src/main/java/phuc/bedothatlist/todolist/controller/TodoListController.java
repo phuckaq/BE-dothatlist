@@ -4,69 +4,55 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import phuc.bedothatlist.todolist.dto.TodoListDTO;
-import phuc.bedothatlist.todolist.entity.TodoList;
-import phuc.bedothatlist.todolist.mapper.TodoListMapper;
 import phuc.bedothatlist.todolist.service.TodoListService;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/todolists")
+@RequestMapping("/api/todo-lists")
 public class TodoListController {
 
     private final TodoListService todoListService;
-    private final TodoListMapper todoListMapper;
 
-    public TodoListController(TodoListService todoListService, TodoListMapper todoListMapper) {
+    public TodoListController(TodoListService todoListService) {
         this.todoListService = todoListService;
-        this.todoListMapper = todoListMapper;
     }
 
     @GetMapping
-    public List<TodoListDTO> getTodoLists() {
-
-        List<TodoList> todoLists =  todoListService.getLists();
-        List<TodoListDTO> todoListDTOS = new ArrayList<>();
-        for(TodoList todoList : todoLists){
-            todoListDTOS.add( todoListMapper.toDto(todoList));
-        }
-        return todoListDTOS;
+    public ResponseEntity<List<TodoListDTO>> getTodoLists() {
+        List<TodoListDTO> todoListDTOs = todoListService.getLists();
+        return ResponseEntity.ok(todoListDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TodoList> getTodoList(@PathVariable Integer id) {
-        TodoList todoList = todoListService.getList(id);
-        if (todoList != null) {
-            return ResponseEntity.ok(todoList);
+    public ResponseEntity<TodoListDTO> getTodoList(@PathVariable("id") Long id) {
+        TodoListDTO todoListDTO = todoListService.getList(id);
+        if (todoListDTO != null) {
+            return ResponseEntity.ok(todoListDTO);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping
-    public ResponseEntity<TodoList> createTodoList(@RequestBody TodoList todoList) {
-        TodoList savedTodoList = todoListService.saveList(todoList);
+    public ResponseEntity<TodoListDTO> createTodoList(@RequestBody TodoListDTO todoListDto) {
+        TodoListDTO savedTodoListDTO = todoListService.saveList(todoListDto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(savedTodoList.getId()).toUri();
-        return ResponseEntity.created(location).body(savedTodoList);
+                .buildAndExpand(savedTodoListDTO.getId()).toUri();
+        return ResponseEntity.created(location).body(savedTodoListDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TodoList> updateTodoList(@PathVariable Integer id, @RequestBody TodoList todoList) {
-        TodoList existingTodoList = todoListService.getList(id);
-        if (existingTodoList != null) {
-            todoList.setId(existingTodoList.getId());
-            TodoList updatedTodoList = todoListService.saveList(todoList);
-            return ResponseEntity.ok(updatedTodoList);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<TodoListDTO> updateTodoList(@PathVariable("id") Long id, @RequestBody TodoListDTO todoListDto) {
+        todoListDto.setId(id);
+        TodoListDTO updatedTodoListDTO = todoListService.saveList(todoListDto);
+        return ResponseEntity.ok(updatedTodoListDTO);
+
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTodoList(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteTodoList(@PathVariable("id") Long id) {
         todoListService.deleteList(id);
         return ResponseEntity.noContent().build();
     }

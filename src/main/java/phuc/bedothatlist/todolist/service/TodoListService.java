@@ -1,14 +1,16 @@
 package phuc.bedothatlist.todolist.service;
 
-import phuc.bedothatlist.todolist.entity.TodoList;
+
+import phuc.bedothatlist.todolist.dto.TodoListDTO;
 
 import java.util.List;
 
 public interface TodoListService {
-    List<TodoList> getLists();
-    TodoList getList(Integer id);
+    List<TodoListDTO> getLists();
 
-    TodoList saveList(TodoList todoList);
+    TodoListDTO getList(Long id);
 
-    void deleteList(Integer id);
+    TodoListDTO saveList(TodoListDTO todoList);
+
+    void deleteList(Long id);
 }

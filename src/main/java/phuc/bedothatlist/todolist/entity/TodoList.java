@@ -2,6 +2,7 @@ package phuc.bedothatlist.todolist.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import phuc.bedothatlist.todolist.dto.TodoListDTO;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -32,7 +33,7 @@ public class TodoList {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        TodoList todoList = (TodoList) o;
+        TodoListDTO todoList = (TodoListDTO) o;
         return getId() != null && Objects.equals(getId(), todoList.getId());
     }
 

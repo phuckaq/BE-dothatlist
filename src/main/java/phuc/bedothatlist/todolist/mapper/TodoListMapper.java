@@ -4,10 +4,13 @@ import org.springframework.stereotype.Component;
 import phuc.bedothatlist.todolist.dto.TodoListDTO;
 import phuc.bedothatlist.todolist.entity.TodoList;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class TodoListMapper {
 
-    public TodoListDTO toDto(TodoList todoList) {
+    public TodoListDTO mapToDto(TodoList todoList) {
         return TodoListDTO.builder()
                 .id(todoList.getId())
                 .name(todoList.getName())
@@ -16,7 +19,7 @@ public class TodoListMapper {
                 .build();
     }
 
-    public TodoList toEntity(TodoListDTO todoListDTO) {
+    public TodoList mapToEntity(TodoListDTO todoListDTO) {
         return TodoList.builder()
                 .id(todoListDTO.getId())
                 .name(todoListDTO.getName())
@@ -25,4 +28,9 @@ public class TodoListMapper {
                 .build();
     }
 
+    public List<TodoListDTO> mapToDtoList(List<TodoList> todoLists) {
+        return todoLists.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
 }
