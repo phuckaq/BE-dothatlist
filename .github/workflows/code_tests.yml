@@ -1,0 +1,30 @@
+name: Code and Tests
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # choose the desired operating system
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK  # adjust for your programming language
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'  # adjust for the required Java version
+
+      - name: Build with Maven  # adjust for your build tool
+        run: mvn clean install --batch-mode
+
+      - name: Run tests  # adjust for your testing framework
+        run: mvn test --batch-mode
